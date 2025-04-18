@@ -1,0 +1,13 @@
+{
+  "manifest_version": 3,
+  "name": "Groqify",
+  "description": "Test extension",
+  "version": "1.0",
+  "action": {
+    "default_popup": "index.html"
+  },
+  "background": {
+    "service_worker": "src/background.js"
+  },
+  "permissions": ["activeTab"]
+}
