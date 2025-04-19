@@ -1,19 +1,28 @@
-import "./App.css";
+import React, { useState, useEffect } from "react";
 
-function App() {
-  const message = "hello world";
+const App = () => {
+  const [selectedText, setSelectedText] = useState("");
+  const [explanation, setExplanation] = useState("");
 
-  const handleClick = () => {
-    alert("button clicked");
-  };
+  useEffect(() => {
+    chrome.runtime.sendMessage(
+      { request: "getLatestExplanation" },
+      (response) => {
+        if (response && response.explanation) {
+          setExplanation(response.explanation);
+          setSelectedText(response.original_text);
+        }
+      }
+    );
+  }, []);
 
   return (
-    <>
-      <h1>Hello World</h1>
-      <p>{message}</p>
-      <button onClick={handleClick}>Click Me!</button>
-    </>
+    <div>
+      <h1>Groq Explanation</h1>
+      <p>Original Text: {selectedText}</p>
+      <p>Explanation: {explanation}</p>
+    </div>
   );
-}
+};
 
 export default App;

@@ -18,6 +18,9 @@ function createButton(text, x, y) {
 
   groqBtn.addEventListener("click", () => {
     console.log("Selected text:", text);
+    chrome.runtime.sendMessage({ selectedText: text }, (response) => {
+      console.log("Response from background:", response);
+    });
     window.getSelection().removeAllRanges();
     groqBtn.remove();
     groqBtn = null;
