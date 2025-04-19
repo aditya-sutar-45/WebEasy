@@ -17,7 +17,7 @@ const App = () => {
   }, []);
 
   return (
-    <div>
+    <div className="App">
       <h1>Groq Explanation</h1>
       <p>Original Text: {selectedText}</p>
       <p>Explanation: {explanation}</p>
