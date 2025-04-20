@@ -4,6 +4,68 @@ const BTN_CLASS = "webeasy-btn";
 let groqBtn = null;
 let sidebarInjected = false;
 
+function typeExplanation(element, text, speed = 30) {
+  element.innerHTML = ""; // Clear previous content
+  element.classList.add("typing");
+
+  const formatted = formatResponse(text); // Apply formatting
+  const tempDiv = document.createElement("div");
+  tempDiv.innerHTML = formatted;
+  const nodes = Array.from(tempDiv.childNodes);
+
+  let currentNodeIndex = 0;
+  let charIndex = 0;
+
+  function typeNextChar() {
+    if (currentNodeIndex >= nodes.length) {
+      element.classList.remove("typing"); // Done typing
+      return;
+    }
+
+    let node = nodes[currentNodeIndex];
+
+    if (node.nodeType === Node.TEXT_NODE) {
+      if (charIndex === 0) {
+        const span = document.createElement("span");
+        element.appendChild(span);
+      }
+
+      const span = element.lastChild;
+      span.textContent += node.textContent.charAt(charIndex);
+      charIndex++;
+
+      if (charIndex < node.textContent.length) {
+        setTimeout(typeNextChar, speed);
+      } else {
+        currentNodeIndex++;
+        charIndex = 0;
+        setTimeout(typeNextChar, speed);
+      }
+    } else {
+      element.appendChild(node.cloneNode(true));
+      currentNodeIndex++;
+      charIndex = 0;
+      setTimeout(typeNextChar, speed);
+    }
+  }
+
+  typeNextChar();
+}
+
+function formatResponse(text) {
+  return (
+    text
+      //  double asterisks into bold or headings
+      .replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>")
+      // Bullet points
+      .replace(/\n\* (.*?)(?=\n|$)/g, "<li>$1</li>")
+      // Wrap bullets in <ul>
+      .replace(/(<li>.*<\/li>)/gs, "<ul>$1</ul>")
+      // paragraphs
+      .replace(/\n{2,}/g, "<br><br>")
+  );
+}
+
 function injectStyles() {
   const link = document.createElement("link");
   link.rel = "stylesheet";
@@ -50,7 +112,7 @@ function showSidebar(original, explanation) {
 
       if (originalTextElement && explanationTextElement) {
         originalTextElement.innerText = original;
-        explanationTextElement.innerText = explanation;
+        typeExplanation(explanationTextElement, explanation, 5);
 
         const sidebar = document.getElementById(SIDEBAR_ID);
         if (sidebar) sidebar.classList.add("open");

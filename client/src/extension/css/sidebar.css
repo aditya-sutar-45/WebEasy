@@ -85,6 +85,20 @@
   transition: background 0.3s, transform 0.2s;
 }
 
+.webeasy-explanation.typing::after {
+  content: "|";
+  animation: blink 1s step-start infinite;
+  margin-left: 4px;
+  color: #888;
+}
+
+@keyframes blink {
+  50% {
+    opacity: 0;
+  }
+}
+
+
 .webeasy-btn:hover {
   background: #2980b9;
 }
