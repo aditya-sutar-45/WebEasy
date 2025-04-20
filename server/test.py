@@ -115,7 +115,7 @@ def get_simplicity_config(level):
         1: {
             "description": "using adult vocabulary with appropriate technical terms",
             "instructions": "Maintain technical accuracy and use domain-specific terminology where appropriate. Complex sentences and concepts are acceptable.",
-            "name": "Adult/Technical"
+            "name": "Technical"
         },
         2: {
             "description": "using vocabulary and concepts understandable to high school students",
