@@ -2,7 +2,6 @@ import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import { viteStaticCopy } from "vite-plugin-static-copy";
 
-// https://vite.dev/config/
 export default defineConfig({
   plugins: [
     react(),
@@ -10,7 +9,7 @@ export default defineConfig({
       targets: [
         {
           src: "manifest.json",
-          dest: "", // Copies manifest.json to the root of dist/
+          dest: "",
         },
         {
           src: "./src/background.js",
@@ -19,6 +18,10 @@ export default defineConfig({
         {
           src: "./src/content.js",
           dest: "src/",
+        },
+        {
+          src: "./src/css/sidebar.css",
+          dest: "",
         },
       ],
     }),

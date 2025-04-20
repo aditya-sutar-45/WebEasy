@@ -1,21 +1,65 @@
+const SIDEBAR_ID = "webeasy-sidebar";
+const BTN_CLASS = "webeasy-btn";
+
 let groqBtn = null;
-let sidebar = null;
+let sidebarInjected = false;
+
+function injectStyles() {
+  const link = document.createElement("link");
+  link.rel = "stylesheet";
+  link.href = chrome.runtime.getURL("sidebar.css");
+  document.head.appendChild(link);
+}
+
+function injectSidebar() {
+  if (sidebarInjected) return;
+
+  const sidebar = document.createElement("div");
+  sidebar.id = SIDEBAR_ID;
+  sidebar.className = "webeasy-sidebar";
+  sidebar.innerHTML = `
+    <div class="webeasy-sidebar-header">
+      <h2>WebEasy Explanation</h2>
+      <button class="webeasy-close-btn" id="webeasy-close-btn">x</button>
+    </div>
+    <div class="webeasy-content">
+      <h3>Original Text:</h3>
+      <div id="webeasy-original-text" class="webeasy-original-text"></div>
+      <h3>Explanation:</h3>
+      <div id="webeasy-explanation" class="webeasy-explanation"></div>
+    </div>
+  `;
+  document.body.appendChild(sidebar);
+
+  document
+    .getElementById("webeasy-close-btn")
+    .addEventListener("click", closeSidebar);
+  sidebarInjected = true;
+}
+
+function showSidebar(original, explanation) {
+  if (!sidebarInjected) injectSidebar();
+
+  document.getElementById("webeasy-original-text").innerText = original;
+  document.getElementById("webeasy-explanation").innerText = explanation;
+
+  setTimeout(() => {
+    document.getElementById(SIDEBAR_ID).classList.add("open");
+  }, 10);
+}
+
+function closeSidebar() {
+  const el = document.getElementById(SIDEBAR_ID);
+  if (el) el.classList.remove("open");
+}
 
 function createButton(text, x, y) {
   groqBtn = document.createElement("button");
   groqBtn.innerText = "Ask WebEasy";
-  groqBtn.style.position = "absolute";
+  groqBtn.className = BTN_CLASS;
   groqBtn.style.top = `${y + 10}px`;
   groqBtn.style.left = `${x + 10}px`;
-  groqBtn.style.zIndex = 9999;
-  groqBtn.style.padding = "6px 10px";
-  groqBtn.style.fontSize = "14px";
-  groqBtn.style.border = "none";
-  groqBtn.style.borderRadius = "5px";
-  groqBtn.style.background = "#111";
-  groqBtn.style.color = "#fff";
-  groqBtn.style.cursor = "pointer";
-  groqBtn.style.boxShadow = "0 2px 6px rgba(0,0,0,0.2)";
+
   groqBtn.addEventListener("click", () => {
     console.log("Selected text:", text);
     chrome.runtime.sendMessage({ selectedText: text }, (response) => {
@@ -24,91 +68,17 @@ function createButton(text, x, y) {
         showSidebar(response.original_text, response.explanation);
       }
     });
+
     window.getSelection().removeAllRanges();
     groqBtn.remove();
     groqBtn = null;
   });
+
   document.body.appendChild(groqBtn);
-}
-
-function showSidebar(originalText, explanation) {
-  if (sidebar) {
-    document.body.removeChild(sidebar);
-  }
-
-  sidebar = document.createElement("div");
-  sidebar.style.position = "fixed";
-  sidebar.style.top = "0";
-  sidebar.style.right = "0";
-  sidebar.style.width = "350px";
-  sidebar.style.height = "100%";
-  sidebar.style.background = "#fff";
-  sidebar.style.boxShadow = "-2px 0 5px rgba(0,0,0,0.2)";
-  sidebar.style.zIndex = 10000;
-  sidebar.style.padding = "20px";
-  sidebar.style.overflow = "auto";
-  sidebar.style.fontFamily = "Arial, sans-serif";
-  sidebar.style.boxSizing = "border-box";
-
-  // Create sidebar content
-  const header = document.createElement("h2");
-  header.innerText = "Groq Explanation";
-  header.style.margin = "0 0 15px 0";
-  header.style.fontSize = "20px";
-  header.style.color = "#333";
-
-  const closeButton = document.createElement("button");
-  closeButton.innerText = "×";
-  closeButton.style.position = "absolute";
-  closeButton.style.top = "10px";
-  closeButton.style.right = "10px";
-  closeButton.style.border = "none";
-  closeButton.style.background = "transparent";
-  closeButton.style.fontSize = "24px";
-  closeButton.style.cursor = "pointer";
-  closeButton.style.color = "#333";
-  closeButton.addEventListener("click", () => {
-    document.body.removeChild(sidebar);
-    sidebar = null;
-  });
-
-  const originalTextTitle = document.createElement("h3");
-  originalTextTitle.innerText = "Original Text:";
-  originalTextTitle.style.fontSize = "16px";
-  originalTextTitle.style.margin = "15px 0 5px 0";
-
-  const originalTextContent = document.createElement("p");
-  originalTextContent.innerText = originalText;
-  originalTextContent.style.margin = "0 0 15px 0";
-  originalTextContent.style.padding = "10px";
-  originalTextContent.style.backgroundColor = "#f5f5f5";
-  originalTextContent.style.borderRadius = "5px";
-  originalTextContent.style.fontSize = "14px";
-
-  const explanationTitle = document.createElement("h3");
-  explanationTitle.innerText = "Explanation:";
-  explanationTitle.style.fontSize = "16px";
-  explanationTitle.style.margin = "15px 0 5px 0";
-
-  const explanationContent = document.createElement("p");
-  explanationContent.innerText = explanation;
-  explanationContent.style.margin = "0";
-  explanationContent.style.fontSize = "14px";
-  explanationContent.style.lineHeight = "1.5";
-
-  sidebar.appendChild(closeButton);
-  sidebar.appendChild(header);
-  sidebar.appendChild(originalTextTitle);
-  sidebar.appendChild(originalTextContent);
-  sidebar.appendChild(explanationTitle);
-  sidebar.appendChild(explanationContent);
-
-  document.body.appendChild(sidebar);
 }
 
 document.addEventListener("mouseup", (e) => {
   setTimeout(() => {
-    // Always remove the old button if it exists
     if (groqBtn) {
       groqBtn.remove();
       groqBtn = null;
@@ -116,9 +86,9 @@ document.addEventListener("mouseup", (e) => {
 
     const selectedText = window.getSelection().toString().trim();
     if (selectedText) {
-      const x = e.pageX;
-      const y = e.pageY;
-      createButton(selectedText, x, y);
+      createButton(selectedText, e.pageX, e.pageY);
     }
   }, 10);
 });
+
+injectStyles();

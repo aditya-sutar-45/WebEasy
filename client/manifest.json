@@ -17,5 +17,12 @@
       "run_at": "document_idle"
     }
   ],
+  "web_accessible_resources": [
+    {
+      "resources": ["sidebar.css"],
+      "matches": ["<all_urls>"]
+    }
+  ],
+
   "permissions": ["scripting", "tabs", "activeTab"]
 }
