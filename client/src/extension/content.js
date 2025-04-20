@@ -72,57 +72,53 @@ function injectStyles() {
   link.href = chrome.runtime.getURL("sidebar.css");
   document.head.appendChild(link);
 }
+async function injectSidebar() {
+  if (sidebarInjected) return;
 
-function injectSidebar() {
-  return new Promise((resolve, reject) => {
-    if (sidebarInjected) return resolve();
+  try {
+    const res = await fetch(chrome.runtime.getURL("sidebar.html"));
+    const html = await res.text();
 
-    fetch(chrome.runtime.getURL("sidebar.html"))
-      .then((res) => res.text())
-      .then((html) => {
-        const tempDiv = document.createElement("div");
-        tempDiv.innerHTML = html;
+    const tempDiv = document.createElement("div");
+    tempDiv.innerHTML = html;
 
-        const sidebar = tempDiv.firstElementChild;
-        document.body.appendChild(sidebar);
+    const sidebar = tempDiv.firstElementChild;
+    document.body.appendChild(sidebar);
 
-        document
-          .getElementById("webeasy-close-btn")
-          .addEventListener("click", closeSidebar);
+    document
+      .getElementById("webeasy-close-btn")
+      .addEventListener("click", closeSidebar);
 
-        sidebarInjected = true;
-        resolve(); // Sidebar injected successfully
-      })
-      .catch((error) => {
-        console.error("Failed to inject sidebar HTML:", error);
-        reject(error); // Reject the promise if there is an error
-      });
-  });
+    sidebarInjected = true;
+  } catch (error) {
+    console.error("Failed to inject sidebar HTML:", error);
+    throw error; // Still important to throw so calling code can handle it
+  }
 }
 
-function showSidebar(original, explanation) {
-  injectSidebar()
-    .then(() => {
-      const originalTextElement = document.getElementById(
-        "webeasy-original-text"
-      );
-      const explanationTextElement = document.getElementById(
-        "webeasy-explanation"
-      );
+async function showSidebar(original, explanation) {
+  try {
+    await injectSidebar();
 
-      if (originalTextElement && explanationTextElement) {
-        originalTextElement.innerText = original;
-        typeExplanation(explanationTextElement, explanation, 5);
+    const originalTextElement = document.getElementById(
+      "webeasy-original-text"
+    );
+    const explanationTextElement = document.getElementById(
+      "webeasy-explanation"
+    );
 
-        const sidebar = document.getElementById(SIDEBAR_ID);
-        if (sidebar) sidebar.classList.add("open");
-      } else {
-        console.error("Sidebar elements not found!");
-      }
-    })
-    .catch((error) => {
-      console.error("Error injecting sidebar:", error);
-    });
+    if (originalTextElement && explanationTextElement) {
+      originalTextElement.innerText = original;
+      typeExplanation(explanationTextElement, explanation, 5);
+
+      const sidebar = document.getElementById(SIDEBAR_ID);
+      if (sidebar) sidebar.classList.add("open");
+    } else {
+      console.error("Sidebar elements not found!");
+    }
+  } catch (error) {
+    console.error("Error injecting sidebar:", error);
+  }
 }
 
 function closeSidebar() {
