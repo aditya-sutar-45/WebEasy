@@ -279,8 +279,5 @@ def test_explanation():
         print("-" * 50)
 
 if __name__ == '__main__':
-    # Test the explanation function
-    test_explanation()
-    
     # Run the Flask app
     app.run(debug=True, port=5000)
