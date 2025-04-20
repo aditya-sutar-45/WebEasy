@@ -23,6 +23,10 @@ export default defineConfig({
           src: "./src/extension/css/sidebar.css",
           dest: "",
         },
+        {
+          src: "./src/extension/sidebar.html",
+          dest: "",
+        }
       ],
     }),
   ],
