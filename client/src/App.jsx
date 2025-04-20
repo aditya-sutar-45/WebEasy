@@ -13,7 +13,8 @@ const App = () => {
   const [explanation, setExplanation] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const [message, setMessage] = useState("");
+  const [notification, setNotification] = useState("");
+  const [showNotification, setShowNotification] = useState(false);
 
   useEffect(() => {
     fetchCurrentLevel(setError, setSimplicity);
@@ -31,10 +32,9 @@ const App = () => {
       if (!response.ok) {
         throw new Error(`Server responded with status: ${response.status}`);
       }
-
-      const data = await response.json();
-      setMessage(data.message);
-      setTimeout(() => setMessage(""), 3000);
+      
+      // Level change successful, but no notification displayed
+      await response.json();
     } catch (error) {
       console.error("Error setting level:", error);
       setError("Failed to update level on server, but using it locally.");
@@ -43,9 +43,18 @@ const App = () => {
     }
   };
 
+  const showTemporaryNotification = (message) => {
+    setNotification(message);
+    setShowNotification(true);
+    setTimeout(() => {
+      setShowNotification(false);
+      setNotification("");
+    }, 3000);
+  };
+
   const handleExplain = async () => {
     if (!inputText.trim()) {
-      setMessage("Please enter text to explain");
+      showTemporaryNotification("Please enter text to explain");
       return;
     }
 
@@ -75,8 +84,63 @@ const App = () => {
     fetchLevels();
   };
 
+  // Custom scrollbar styles
+  const scrollbarStyle = `
+    /* Scrollbar styles */
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+    
+    ::-webkit-scrollbar-track {
+      background: #f1f1f1;
+      border-radius: 10px;
+    }
+    
+    ::-webkit-scrollbar-thumb {
+      background: #b0b7ed;
+      border-radius: 10px;
+      transition: all 0.2s ease;
+    }
+    
+    ::-webkit-scrollbar-thumb:hover {
+      background: #8287dc;
+    }
+    
+    /* For Firefox */
+    * {
+      scrollbar-width: thin;
+      scrollbar-color: #b0b7ed #f1f1f1;
+    }
+    
+    /* For the text area */
+    textarea::-webkit-scrollbar {
+      width: 6px;
+    }
+    
+    textarea::-webkit-scrollbar-thumb {
+      background: #c7c7c7;
+    }
+    
+    textarea::-webkit-scrollbar-thumb:hover {
+      background: #a0a0a0;
+    }
+  `;
+
   return (
-    <div className="bg-gray-50 font-sans h-full w-full overflow-hidden flex flex-col">
+    <div className="bg-gray-50 font-sans h-full w-full overflow-hidden flex flex-col relative">
+      {/* Custom scrollbar styles */}
+      <style>{scrollbarStyle}</style>
+      
+      {/* Popup Notification */}
+      {showNotification && (
+        <div className="absolute top-16 left-1/2 transform -translate-x-1/2 z-50">
+          <div className="bg-green-100 border border-green-200 text-green-700 rounded-md shadow-md py-2 px-4 text-sm animate-fade-in-out">
+            {notification}
+          </div>
+        </div>
+      )}
+
       {/* Header - Compact for extension */}
       <header className="bg-indigo-600 text-white py-3 px-4">
         <div className="flex items-center justify-between">
@@ -87,7 +151,7 @@ const App = () => {
 
       {/* Main content with scroll */}
       <main className="flex-1 overflow-y-auto p-4 space-y-4 h-full">
-        {/* Error and status messages */}
+        {/* Error message */}
         {error && (
           <div className="bg-red-50 border border-red-200 rounded p-2 text-sm flex justify-between items-center">
             <span className="text-red-600 text-xs">{error}</span>
@@ -97,12 +161,6 @@ const App = () => {
             >
               Retry
             </button>
-          </div>
-        )}
-
-        {message && (
-          <div className="bg-green-50 border border-green-200 text-green-700 rounded p-2 text-sm text-center">
-            {message}
           </div>
         )}
 
@@ -120,7 +178,7 @@ const App = () => {
                     key={level}
                     onClick={() => handleLevelChange(level)}
                     disabled={loading}
-                    className={`py-1 px-1 rounded text-sm font-medium transition-colors ${
+                    className={`py-1 px-2 rounded text-xs font-medium transition-colors ${
                       simplicity === level
                         ? "bg-indigo-600 text-white"
                         : "bg-gray-100 text-gray-700 hover:bg-gray-200"
@@ -162,7 +220,7 @@ const App = () => {
             <button
               onClick={handleExplain}
               disabled={loading || Object.keys(levels).length === 0}
-              className={`py-2 px-4 rounded text-sm font-medium transition-colors ${
+              className={`py-1 px-3 rounded text-sm font-medium transition-colors ${
                 loading || Object.keys(levels).length === 0
                   ? "bg-gray-400 text-white cursor-not-allowed"
                   : "bg-indigo-600 hover:bg-indigo-700 text-white"
@@ -177,7 +235,7 @@ const App = () => {
           </div>
         </section>
 
-        {/* Output Section */}
+        {/* Output Section with Formatted Text */}
         {explanation && (
           <section className="bg-white rounded shadow-sm p-3">
             <h2 className="text-md font-medium text-indigo-600 mb-2">
@@ -185,7 +243,11 @@ const App = () => {
             </h2>
 
             <div className="bg-gray-50 p-3 rounded border-l-2 border-indigo-400 text-gray-700 text-sm overflow-y-auto max-h-64">
-              {explanation}
+              {explanation.split('\n\n').map((paragraph, idx) => (
+                <p key={idx} className="mb-2 last:mb-0">
+                  {paragraph}
+                </p>
+              ))}
             </div>
           </section>
         )}
