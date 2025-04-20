@@ -1,10 +1,9 @@
-// content.js
 let groqBtn = null;
 let sidebar = null;
 
 function createButton(text, x, y) {
   groqBtn = document.createElement("button");
-  groqBtn.innerText = "Ask Groq";
+  groqBtn.innerText = "Ask WebEasy";
   groqBtn.style.position = "absolute";
   groqBtn.style.top = `${y + 10}px`;
   groqBtn.style.left = `${x + 10}px`;

@@ -1,4 +1,3 @@
-// background.js
 let latestResult = null;
 
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
