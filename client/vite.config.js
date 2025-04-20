@@ -8,19 +8,19 @@ export default defineConfig({
     viteStaticCopy({
       targets: [
         {
-          src: "manifest.json",
+          src: "./src/extension/manifest.json",
           dest: "",
         },
         {
-          src: "./src/background.js",
+          src: "./src/extension/background.js",
           dest: "src/",
         },
         {
-          src: "./src/content.js",
+          src: "./src/extension/content.js",
           dest: "src/",
         },
         {
-          src: "./src/css/sidebar.css",
+          src: "./src/extension/css/sidebar.css",
           dest: "",
         },
       ],

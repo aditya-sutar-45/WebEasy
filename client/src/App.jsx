@@ -5,6 +5,7 @@ import {
   fetchLevels,
   selectLevel,
 } from "./api/api";
+import "./css/App.css";
 
 const App = () => {
   const [simplicity, setSimplicity] = useState(3);
