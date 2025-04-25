@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
   explain,
   fetchCurrentLevel,
@@ -15,10 +15,24 @@ const App = () => {
   const [error, setError] = useState("");
   const [notification, setNotification] = useState("");
   const [showNotification, setShowNotification] = useState(false);
+  const [showInstructions, setShowInstructions] = useState(false);
+  const instructionsRef = useRef(null);
 
   useEffect(() => {
     fetchCurrentLevel(setError, setSimplicity);
     fetchLevels(setError, setLevels);
+
+    // Close dropdown when clicking outside
+    const handleClickOutside = (event) => {
+      if (instructionsRef.current && !instructionsRef.current.contains(event.target)) {
+        setShowInstructions(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
   }, []);
 
   const handleLevelChange = async (level) => {
@@ -84,6 +98,10 @@ const App = () => {
     fetchLevels();
   };
 
+  const toggleInstructions = () => {
+    setShowInstructions(!showInstructions);
+  };
+
   // Custom scrollbar styles
   const scrollbarStyle = `
     /* Scrollbar styles */
@@ -125,6 +143,19 @@ const App = () => {
     textarea::-webkit-scrollbar-thumb:hover {
       background: #a0a0a0;
     }
+    
+    /* Dropdown animation */
+    .dropdown-menu {
+      transform-origin: top;
+      transition: transform 0.2s ease, opacity 0.2s ease;
+      transform: scaleY(0);
+      opacity: 0;
+    }
+    
+    .dropdown-menu.open {
+      transform: scaleY(1);
+      opacity: 1;
+    }
   `;
 
   return (
@@ -145,7 +176,41 @@ const App = () => {
       <header className="bg-indigo-600 text-white py-3 px-4">
         <div className="flex items-center justify-between">
           <h1 className="text-xl font-bold">WebEasy</h1>
-          <p className="text-sm text-indigo-100">Text Simplifier</p>
+          <div className="flex items-center space-x-2">
+            {/* Instructions dropdown */}
+            <div className="relative" ref={instructionsRef}>
+              <button
+                onClick={toggleInstructions}
+                className="bg-indigo-500 hover:bg-indigo-400 text-white text-xs py-1 px-2 rounded transition-colors flex items-center"
+              >
+                <span className="mr-1">?</span>
+                <span>How to Use</span>
+                <span className="ml-1">{showInstructions ? '▲' : '▼'}</span>
+              </button>
+              
+              {/* Dropdown menu */}
+              <div 
+                className={`absolute right-0 top-full mt-1 w-64 bg-white rounded shadow-lg z-50 dropdown-menu ${showInstructions ? 'open' : ''}`}
+              >
+                <div className="p-3 text-sm">
+                  <h3 className="font-medium text-indigo-700 mb-2 border-b border-indigo-100 pb-1">
+                    How to Use WebEasy
+                  </h3>
+                  <ol className="list-decimal pl-5 space-y-1 text-gray-700">
+                    <li>Choose a <strong>Simplicity Level</strong> that matches your needs</li>
+                    <li>Paste or type complex text in the box</li>
+                    <li>Click <strong>Simplify Text</strong></li>
+                    <li>Review your simplified explanation</li>
+                    <li>Adjust level if needed and try again</li>
+                  </ol>
+                  <div className="mt-2 bg-indigo-50 p-2 rounded text-xs text-indigo-600">
+                    <strong>Tip:</strong> Level 1 is most basic, Level 5 is most detailed
+                  </div>
+                </div>
+              </div>
+            </div>
+            <p className="text-sm text-indigo-100">Text Simplifier</p>
+          </div>
         </div>
       </header>
 
