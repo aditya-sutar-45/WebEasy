@@ -80,6 +80,9 @@ Select any complex text on any webpage and instantly simplify it in kid-friendly
 ### Smart Context Menu ("Ask WebEasy" Button):
 After selecting text, a custom floating button appears right next to your selection — providing a smooth and intuitive experience.
 
+### Select the level of complexity of the explaination:
+5 different level to toggle level of complexity 
+
 ### Real-Time API Integration:
 Seamless communication between the Chrome extension and a Flask backend to fetch AI-generated explanations in real time.
 
@@ -93,9 +96,9 @@ Built from scratch without heavy libraries — ensuring faster performance and b
 
 ## 📽️ Demo & Deliverables
 
-- **Demo Video Link:** [Paste YouTube or Loom link here]  
-- **Pitch Deck / PPT Link:** [Paste Google Slides / PDF link here]  
-
+- **Demo Video Link:**   
+![video 1](https://drive.google.com/file/d/10a5Il2QlCIR9xakxlpGvwXafB3bB8LVX/view?usp=drive_link)
+![video 2](https://drive.google.com/file/d/1bjgI_ScwrETvfZ67GwsZgos2uZQF1CNE/view?usp=drive_link)
 ---
 
 ## ✅ Tasks & Bonus Checklist
