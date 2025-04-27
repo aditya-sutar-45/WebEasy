@@ -97,8 +97,8 @@ Built from scratch without heavy libraries — ensuring faster performance and b
 ## 📽️ Demo & Deliverables
 
 - **Demo Video Link:**   
-![video 1](https://drive.google.com/file/d/10a5Il2QlCIR9xakxlpGvwXafB3bB8LVX/view?usp=drive_link)
-![video 2](https://drive.google.com/file/d/1bjgI_ScwrETvfZ67GwsZgos2uZQF1CNE/view?usp=drive_link)
+https://drive.google.com/file/d/10a5Il2QlCIR9xakxlpGvwXafB3bB8LVX/view?usp=sharing
+https://drive.google.com/file/d/1bjgI_ScwrETvfZ67GwsZgos2uZQF1CNE/view?usp=sharing
 ---
 
 ## ✅ Tasks & Bonus Checklist
