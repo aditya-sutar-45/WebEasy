@@ -136,7 +136,7 @@ upload you `dist/` folder by clicking "Load Unpacked"
 
 ### Server Setup:
 
-**NOTE: ** add a `.env` file in your root of your directory
+**NOTE:** add a `.env` file in your root of your directory
 https://console.groq.com/ create a groq api key and paste it in your env
 ```.env
 GROQ_API_KEY = your_api_key
