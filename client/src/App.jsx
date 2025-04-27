@@ -24,7 +24,10 @@ const App = () => {
 
     // Close dropdown when clicking outside
     const handleClickOutside = (event) => {
-      if (instructionsRef.current && !instructionsRef.current.contains(event.target)) {
+      if (
+        instructionsRef.current &&
+        !instructionsRef.current.contains(event.target)
+      ) {
         setShowInstructions(false);
       }
     };
@@ -46,7 +49,7 @@ const App = () => {
       if (!response.ok) {
         throw new Error(`Server responded with status: ${response.status}`);
       }
-      
+
       // Level change successful, but no notification displayed
       await response.json();
     } catch (error) {
@@ -162,7 +165,7 @@ const App = () => {
     <div className="bg-gray-50 font-sans h-full w-full overflow-hidden flex flex-col relative">
       {/* Custom scrollbar styles */}
       <style>{scrollbarStyle}</style>
-      
+
       {/* Popup Notification */}
       {showNotification && (
         <div className="absolute top-16 left-1/2 transform -translate-x-1/2 z-50">
@@ -183,28 +186,39 @@ const App = () => {
                 onClick={toggleInstructions}
                 className="bg-indigo-500 hover:bg-indigo-400 text-white text-xs py-1 px-2 rounded transition-colors flex items-center"
               >
-                <span className="mr-1">?</span>
                 <span>How to Use</span>
-                <span className="ml-1">{showInstructions ? '▲' : '▼'}</span>
+                <span className="ml-1">{showInstructions ? "▲" : "▼"}</span>
               </button>
-              
+
               {/* Dropdown menu */}
-              <div 
-                className={`absolute right-0 top-full mt-1 w-64 bg-white rounded shadow-lg z-50 dropdown-menu ${showInstructions ? 'open' : ''}`}
+              <div
+                className={`absolute right-0 top-full mt-1 w-64 bg-white rounded shadow-lg z-50 dropdown-menu ${
+                  showInstructions ? "open" : ""
+                }`}
               >
                 <div className="p-3 text-sm">
                   <h3 className="font-medium text-indigo-700 mb-2 border-b border-indigo-100 pb-1">
                     How to Use WebEasy
                   </h3>
                   <ol className="list-decimal pl-5 space-y-1 text-gray-700">
-                    <li>Choose a <strong>Simplicity Level</strong> that matches your needs</li>
-                    <li>Paste or type complex text in the box</li>
-                    <li>Click <strong>Simplify Text</strong></li>
+                    <li>
+                      Choose a <strong>Simplicity Level</strong> that matches
+                      your needs
+                    </li>
+                    <li>
+                      Paste or type text in the box OR if its a website just
+                      select the text and click the <strong>AskWebEasy</strong>{" "}
+                      button
+                    </li>
+                    <li>
+                      Click <strong>Simplify Text</strong>
+                    </li>
                     <li>Review your simplified explanation</li>
                     <li>Adjust level if needed and try again</li>
                   </ol>
                   <div className="mt-2 bg-indigo-50 p-2 rounded text-xs text-indigo-600">
-                    <strong>Tip:</strong> Level 1 is most basic, Level 5 is most detailed
+                    <strong>Tip:</strong> Level 1 is most basic, Level 5 is most
+                    detailed
                   </div>
                 </div>
               </div>
@@ -308,7 +322,7 @@ const App = () => {
             </h2>
 
             <div className="bg-gray-50 p-3 rounded border-l-2 border-indigo-400 text-gray-700 text-sm overflow-y-auto max-h-64">
-              {explanation.split('\n\n').map((paragraph, idx) => (
+              {explanation.split("\n\n").map((paragraph, idx) => (
                 <p key={idx} className="mb-2 last:mb-0">
                   {paragraph}
                 </p>
