@@ -138,9 +138,19 @@ upload you `dist/` folder by clicking "Load Unpacked"
 ```bash
 cd server
 
+#install virtual enviroment 
+pip install virtualenv env 
+
+#add virtual enviroment 
+virtualenv env 
+
+#activate virtual enviroment
+.\env\Scripts\activate.ps1   
+
+#install requirements.txt
+pip install -r requirements.txt  
 
 ```
-
 ---
 
 ## 🧬 Future Scope
